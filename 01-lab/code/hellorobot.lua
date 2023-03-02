@@ -13,7 +13,7 @@ function init()
 	left_v = robot.random.uniform(0,MAX_VELOCITY)
 	right_v = robot.random.uniform(0,MAX_VELOCITY)
 	-- robot variable is given. Robot has attributes that can be accesed.
-	robot.wheels.set_velocity(left_v,right_v) -- assign to the left and right wheels random velicity (expressed as m/s)
+	robot.wheels.set_velocity(left_v,right_v) -- assign to the left and right wheels random velicity (expressed as cm/s)
 	n_steps = 0
 	robot.leds.set_all_colors("black")
 end
