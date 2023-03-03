@@ -6,7 +6,7 @@ end
 
 function step()
     max_light_value = -1
-    max_light_index = 1
+    max_light_index = -1
     for i=1,#robot.light do
         if max_light_value < robot.light[i].value then
             max_light_index = i
