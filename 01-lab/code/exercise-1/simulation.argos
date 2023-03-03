@@ -39,7 +39,6 @@
       <body position="1.9, 0, 0"  orientation="0,0,0" />
     </box>
     <box id="bs" size="0.1, 4, 0.2" movable="false">
-      <!-- x, y, z -->
       <body position="-1.9,0,0" orientation="0,0,0" />
     </box>
     <box id="be" size="4, 0.1, 0.2" movable="false">
