@@ -33,7 +33,7 @@ function step()
     end
     
     if max_proximity_value < MAX_PROXIMITY_THRESHOLD then
-        -- If the robot is stuck or is completely free or is 
+        -- If the robot is completely free or is 
         -- not enough near to an obstacle then move randomly
         if n_steps % MOVE_STEPS == 0 then
             left_v = robot.random.uniform(0,MAX_VELOCITY)

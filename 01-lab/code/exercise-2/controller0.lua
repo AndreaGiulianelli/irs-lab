@@ -27,7 +27,7 @@ function step()
     log("Max proximity " .. max_proximity_value .. " - index: " .. max_proximity_index)
     
     if (sum == 0) then
-        -- If the robot is stuck or is completely free then move randomly
+        -- If the robot is completely free then move randomly
         if n_steps % MOVE_STEPS == 0 then
             left_v = robot.random.uniform(0,MAX_VELOCITY)
             right_v = robot.random.uniform(0,MAX_VELOCITY)
