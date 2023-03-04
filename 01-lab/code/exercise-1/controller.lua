@@ -19,7 +19,7 @@ function step()
     left_v = 0
     right_v = 0
 
-    -- Check if the sensor have sensed some light
+    -- Check if the sensors have sensed some light
     if max_light_value > 0 then
         -- Some sensor have sensed light
         -- Get direction
