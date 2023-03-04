@@ -18,7 +18,7 @@ function step()
     max_proximity_index = -1
     sum = 0
     proximity_sensor_to_use = { 1,2,3,24,23,22}
-    -- Get the maximum value and index only for logging purposes.
+    -- Get the maximum value and index (index only for logging purposes).
     for i=1,#proximity_sensor_to_use do
         index = proximity_sensor_to_use[i]
         if max_proximity_value < robot.proximity[index].value then
