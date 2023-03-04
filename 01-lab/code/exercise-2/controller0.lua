@@ -14,19 +14,18 @@ function step()
     n_steps = n_steps + 1
     max_proximity_value = -1
     max_proximity_index = -1
-    sum = 0
-    -- Get the maximum value and index only for logging purposes.
+
+    -- Get the maximum value and index (index only for logging purposes).
     for i=1,#robot.proximity do
         if max_proximity_value < robot.proximity[i].value then
             max_proximity_index = i
             max_proximity_value = robot.proximity[i].value
         end
-        sum = sum + robot.proximity[i].value
     end
 
     log("Max proximity " .. max_proximity_value .. " - index: " .. max_proximity_index)
     
-    if (sum == 0) then
+    if (max_proximity_value == 0) then
         -- If the robot is completely free then move randomly
         if n_steps % MOVE_STEPS == 0 then
             left_v = robot.random.uniform(0,MAX_VELOCITY)

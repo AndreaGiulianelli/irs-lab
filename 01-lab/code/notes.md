@@ -36,8 +36,8 @@ Also here try to get the "local best decision" that is try to not collide with t
 
 I have tried different ideas.
 The first one is the simplest trying to be more conservative using all the 24 proximity sensors and avoiding the obstacle always on the same way:
-1. Sense all the 24 proximity sensors and get the sum of the proximities.
-2. If the sum is 0 it means that the robot doesn't sense any obstacle, so we continue to random walk.
+1. Sense all the 24 proximity sensors and get the max of the proximities.
+2. If the max is 0 it means that the robot doesn't sense any obstacle, so we continue to random walk.
 3. Else it means that in the robot sorroundings there is an obstacle, so we need to try to avoid it. In this simple solution (also considering only the use of the proximity, that can't understand - when the value is 1 - if there is a collision or we are only very very near) we turn always left. In this way the robot will be able to find a way to exit.
 
 Advantages:
