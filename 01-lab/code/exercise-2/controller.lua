@@ -16,7 +16,6 @@ function step()
     n_steps = n_steps + 1
     max_proximity_value = -1
     max_proximity_index = -1
-    sum = 0
     proximity_sensor_to_use = { 1,2,3,24,23,22}
     -- Get the maximum value and index (index only for logging purposes).
     for i=1,#proximity_sensor_to_use do
@@ -25,7 +24,6 @@ function step()
             max_proximity_index = index
             max_proximity_value = robot.proximity[index].value
         end
-        sum = sum + robot.proximity[index].value
     end
 
     -- Logging
@@ -34,7 +32,7 @@ function step()
         log("PROBABLE COLLISION")
     end
     
-    if (sum == 0) or (max_proximity_value < MAX_PROXIMITY_THRESHOLD) then
+    if max_proximity_value < MAX_PROXIMITY_THRESHOLD then
         -- If the robot is stuck or is completely free or is 
         -- not enough near to an obstacle then move randomly
         if n_steps % MOVE_STEPS == 0 then
