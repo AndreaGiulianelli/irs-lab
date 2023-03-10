@@ -78,3 +78,22 @@ Otherwise (threshold = 0) it is possible that the robot always detects some valu
 ### Variant 2 - Try with more robots
 The solution seems to act in a similar manner even with a few more robots (also in the avoidance of the robots themselves).
 However adding more robots with a lot of obstacles will generate a dense environment, so the probability of having higher proximity (near to 1, so possible collision) are higher due to what was said before.
+
+
+## Exercise 3
+Additional requirements:
+- Timeout -> 60seconds for example
+- Print at the end of the simulation the distance respect to the light.
+Additional variants:
+- Add more robots
+- Add more obstacles
+    - Add obstacles of different shapes and dimension
+- Add noise to actuators and sensors
+
+Consider:
+- the robot can be in a situation where the light is not visible (maybe a big obstacle).
+- the robot should remain near to the light even when the robot reach it. This because the distance is computed at the end.
+- If we don't use memory and we use a strategy that consider the fact that when light is not visible it moves randomly then the robot "depends on the randomness" and the time needed to put itself in a position where it can see the light may be high. 
+
+
+
