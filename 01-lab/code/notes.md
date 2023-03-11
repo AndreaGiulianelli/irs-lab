@@ -82,18 +82,33 @@ However adding more robots with a lot of obstacles will generate a dense environ
 
 ## Exercise 3
 Additional requirements:
-- Timeout -> 60seconds for example
+- Timeout -> 3000 ticks
 - Print at the end of the simulation the distance respect to the light.
-Additional variants:
-- Add more robots
-- Add more obstacles
-    - Add obstacles of different shapes and dimension
-- Add noise to actuators and sensors
 
-Consider:
+Important aspects:
 - the robot can be in a situation where the light is not visible (maybe a big obstacle).
 - the robot should remain near to the light even when the robot reach it. This because the distance is computed at the end.
-- If we don't use memory and we use a strategy that consider the fact that when light is not visible it moves randomly then the robot "depends on the randomness" and the time needed to put itself in a position where it can see the light may be high. 
+- if we don't use memory and we use a strategy that consider the fact that when light is not visible it moves randomly then the robot "depends on the randomness" and the time needed to put itself in a position where it can see (again or for the first time) the light may be high.
+
+Idea:
+I have combined the solutions of the first two exercises with some changes.
+The first thing the robot does is check if there are obstacles close enough. This time I have considered all the proximity sensors on the upper arc (1, 2, 3, 4, 5, 6, 24, 23, 22, 21, 20, 19) because to reach the light the trajectory is not corrected by turning on itself, but by turning "more gracefully", therefore with multiple proximity sensors I can cover the side of his body as well.
+Then if there aren't any dangerous obstacles the robot will go towards the light with the same strategy of the first exercise. If the robot instead can't sense the light it will go random in order to re-find it.
+The only difference is that the speed will decrease the more the robot is near to the light. This in order to avoid large and fast movements when the robot is near the light and in order to be as close as possible when the simulation stops.
+Instead, if the robot sees an obstacle then it will turn on the opposite side of where the obstacle is (in order to minimize the deviation respect to the trajectory, similar to dodge the obstacle).
+
+This strategy seems allow the robot to avoid getting stuck in all those awkward situations for it such as obstacles arranged in a cone, etc...
+
+Also I left the light source with intensity 1 and it is positioned in a corner of the arena, so it is not visible in a lot of part of the arena itself. Increasing the intensity it will result in the light being more visible all over the arena and on less random walk by the robot trying to find it.
+
+### Variant 1 - Add more robots
+The behavior seems similar except for the fact that two robot can detect themself as obstacles and this will possible cause them to go away from the light source until the robots move away from each other.
+
+### Variant 2 - Add more obstacles (also of different shapes)
+The behavior seems similar. I have also inserted some high obstacles that prevent the robot seeing the light. This is handled by the robot beacuse it will start to move randomly in order to re-find the light.
+
+### Variant 3 - Add noise to actuators and sensors
+The difficulties for the robot increase but with limited amout of noise it manages to reach its goal.
 
 
 
