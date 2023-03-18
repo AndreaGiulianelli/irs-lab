@@ -5,9 +5,9 @@ function init()
 end
 
 avoiding = false
-MAX_PROXIMITY_THRESHOLD = 0.2 -- Threshold for proximity
-left_obstacle_avoidance_v = 0
-right_obstacle_avoidance_v = 0
+MAX_PROXIMITY_THRESHOLD = 0.4 -- Threshold for proximity
+left_obstacle_avoidance_v = 0 -- Left motor speed in the current avoidance
+right_obstacle_avoidance_v = 0 -- Right motor speed in the current avoidance
 -- Obstacle Avoidance layer
 function obstacleAvoidance(inh_left_v, inh_right_v)
     -- Check if there are inhibition from the upper layer
@@ -15,7 +15,7 @@ function obstacleAvoidance(inh_left_v, inh_right_v)
         max_proximity_value = -1
         max_proximity_index = -1
         proximity_sensor_to_use = { 1, 2, 3, 4, 5, 6, 24, 23, 22, 21, 20, 19}
-        -- Get the maximum value.
+        -- Get the maximum proximity value.
         for i=1,#proximity_sensor_to_use do
             index = proximity_sensor_to_use[i]
             if max_proximity_value < robot.proximity[index].value then
@@ -53,11 +53,11 @@ function obstacleAvoidance(inh_left_v, inh_right_v)
         end
     end
 
-    -- else, in case that there are inhibition return the upper values.
-    return inh_left_v, inh_right_v
+    -- else, in case that there are inhibition from the upper layers return the upper values.
+    return lightFollower(inh_left_v, inh_right_v)
 end
 
-LIGHT_THRESHOLD = 0.6
+LIGHT_THRESHOLD = 0.58 -- Used to compute the speed depending on the distance from the light. This value depends on the intensity and the height of the light source.
 -- Light Follower layer
 function lightFollower(inh_left_v, inh_right_v)
     -- Check if there are inhibition from the upper layer
@@ -72,30 +72,33 @@ function lightFollower(inh_left_v, inh_right_v)
             end
         end
 
-        if max_light_value > LIGHT_THRESHOLD then
-            -- We are under or very near the light, so stop
-            return randomWalk(0, 0)
-        elseif max_light_value > 0 then
+        log("Max light " .. max_light_value)
+
+        if max_light_value > 0 then
             -- Some sensor have sensed light -> Get direction
+            -- First, compute the speed depending on the sensed light intensity.
+            max_speed_depending_on_ligh = (1 - (max_light_value / LIGHT_THRESHOLD)) * MAX_VELOCITY
+            if max_speed_depending_on_ligh < 0 then max_speed_depending_on_ligh = 0 end -- Correct value in case the sensed value is higher than the threshold used to stop
+            
             if (max_light_index <= 12) and (max_light_index > 1) then
-                right_v = MAX_VELOCITY
+                right_v = max_speed_depending_on_ligh
                 left_v = 0
             elseif (max_light_index >= 13) and (max_light_index < 24) then
-                left_v = MAX_VELOCITY
+                left_v = max_speed_depending_on_ligh
                 right_v = 0
             else
-                left_v = MAX_VELOCITY
-                right_v = MAX_VELOCITY
+                left_v = max_speed_depending_on_ligh
+                right_v = max_speed_depending_on_ligh
             end
             -- Call the lower layer inhibiting values
             return randomWalk(left_v, right_v)
         else
-            -- No light detected, delegate the work to randomWalk layer
+            -- No light detected, delegate the work to find the light to randomWalk layer
             return randomWalk(false, false)
         end
     end
 
-    -- else, in case that there are inhibition call the lower layers passing the values.
+    -- else, in case that there are inhibition from the upper layers return the upper values.
     return randomWalk(inh_left_v, inh_right_v)
 end
 
@@ -115,13 +118,10 @@ function randomWalk(inh_left_v, inh_right_v)
         return left_v, right_v
     end
 
-    -- else, in case that there are inhibition return the upper values.
+    -- else, in case that there are inhibition from the upper layers return the upper values.
     return inh_left_v, inh_right_v
 end
 
-
--- Possible refactor with an engine and a list of behaviors
--- that are executed one after the other
 function step()
     left_v, right_v = obstacleAvoidance(false, false)
     robot.wheels.set_velocity(left_v,right_v)
