@@ -5,7 +5,7 @@ function init()
 end
 
 avoiding = false
-MAX_PROXIMITY_THRESHOLD = 0.4 -- Threshold for proximity
+MAX_PROXIMITY_THRESHOLD = 0.3 -- Threshold for proximity
 left_obstacle_avoidance_v = 0 -- Left motor speed in the current avoidance
 right_obstacle_avoidance_v = 0 -- Right motor speed in the current avoidance
 -- Obstacle Avoidance layer
