@@ -47,15 +47,17 @@ LIGHT_MAX = 0.58
 function lightFollowerBehaviour()
     -- Perceptual schema
     -- It takes all the light sensors and find the light with the max value and obtain its angle
-    max_light_index, max_light_value, max_light_angle = utils.maxOfSensors(robot.light)
-
+    _, max_light_value, max_light_angle = utils.maxOfSensors(robot.light)
+    
     -- Motor schema
     if(max_light_value > THRESHOLD_FOR_NOISE) then -- Check that the value is greater that the threshold (below could be noise of the sensor)
         resultLength = (1 - (max_light_value / LIGHT_MAX))
+        resultAngle = max_light_angle
     else
         resultLength = 0.0
+        resultAngle = 0.0
     end
-    return {length = resultLength, angle = max_light_angle}
+    return {length = resultLength, angle = resultAngle}
 end
 
 -- Function to convert commands in the form of translational and angular velocities into differential wheel velocitites
@@ -90,6 +92,13 @@ function step()
     -- Transform the resulting vector in differential steering and command the motors.
     differentialCmd = vector.toDifferential(resultingVector)
     robot.wheels.set_velocity(differentialCmd.l, differentialCmd.r)
+
+    -- Some logs
+    log("length: " .. resultingVector.length)
+    log("angle: " .. resultingVector.angle)
+
+    log("left: " .. differentialCmd.l)
+    log("right: " .. differentialCmd.r)
 end
 
 
