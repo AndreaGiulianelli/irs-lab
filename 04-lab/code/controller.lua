@@ -1,4 +1,5 @@
 local vector = require "vector"
+local utils = require "utils"
 
 L = robot.wheels.axis_length
 MAX_VELOCITY = 15
@@ -11,29 +12,18 @@ end
 n_steps = 0
 CHANGE_RANDOM_STEPS = 15
 randomAngle = 0
-randomLength = 0
 function randomWalkBehaviour()
     -- Perceptual schema
     -- It takes all the light and proximity sensors
-    max_proximity_value = -1
-    for i=1,#robot.proximity do
-        if max_proximity_value < robot.proximity[i].value then
-            max_proximity_value = robot.proximity[i].value
-        end
-    end
-
-    max_light_value = -1
-    for i=1,#robot.light do
-        if max_light_value < robot.light[i].value then
-            max_light_value = robot.light[i].value
-        end
-    end
+    _, max_proximity_value = utils.maxOfSensors(robot.proximity)
+    _, max_light_value = utils.maxOfSensors(robot.light)
 
     -- Motor schema
+    -- Abilitate noise field only when light and proximity are under the threshold
     if (max_light_value < THRESHOLD_FOR_NOISE) and (max_proximity_value < THRESHOLD_FOR_NOISE) then
         -- move random
         if n_steps % CHANGE_RANDOM_STEPS == 0 then
-            randomAngle = robot.random.uniform(-math.pi, math.pi)
+            randomAngle = robot.random.uniform(-math.pi / 2, math.pi / 2)
             n_steps = 0
         end
         n_steps = n_steps + 1
@@ -53,78 +43,53 @@ function obstacleAvoidanceBehaviour(nSensor)
     return {length = proximity, angle = (-(proximityAngle/proximityAngle)*math.pi + proximityAngle)}
 end
 
-LIGHT_THRESHOLD = 0.58
+LIGHT_MAX = 0.58
 function lightFollowerBehaviour()
     -- Perceptual schema
     -- It takes all the light sensors and find the light with the max value and obtain its angle
-    max_light_value = -1
-    max_light_index = -1
-    max_light_angle = -1
-    for i=1,#robot.light do
-        if max_light_value < robot.light[i].value then
-            max_light_index = i
-            max_light_value = robot.light[i].value
-            max_light_angle = robot.light[i].angle
-        end
-    end
+    max_light_index, max_light_value, max_light_angle = utils.maxOfSensors(robot.light)
 
     -- Motor schema
-    if(max_light_value > THRESHOLD_FOR_NOISE) then
-        resultLength = (1 - (max_light_value / LIGHT_THRESHOLD))
+    if(max_light_value > THRESHOLD_FOR_NOISE) then -- Check that the value is greater that the threshold (below could be noise of the sensor)
+        resultLength = (1 - (max_light_value / LIGHT_MAX))
     else
         resultLength = 0.0
     end
     return {length = resultLength, angle = max_light_angle}
 end
 
+-- Function to convert commands in the form of translational and angular velocities into differential wheel velocitites
 function vector.toDifferential(v)
-    -- TODO: vector with l - left and r - right.
     return {
-        l = 1 * v.length * MAX_VELOCITY - L / 2 * v.angle,
-        r = 1 * v.length * MAX_VELOCITY + L / 2 * v.angle
+        l = utils.limitVelocity(MAX_VELOCITY, 1 * v.length * MAX_VELOCITY - L / 2 * v.angle),
+        r = utils.limitVelocity(MAX_VELOCITY, 1 * v.length * MAX_VELOCITY + L / 2 * v.angle)
     }
 end
 
-function limitVelocity(v)
-    if v > MAX_VELOCITY then
-      return MAX_VELOCITY
-    elseif v < -MAX_VELOCITY then
-      return -MAX_VELOCITY
-    else
-      return v
-    end
-  end
-
-function concatArray(a, b)
-    local result = {table.unpack(a)}
-    table.move(b, 1, #b, #result + 1, result)
-    return result
-end
-  
-
 function step()
     -- List/Table of all the behaviors
-    -- Obtain the obstacle avoidance behaviors
+    -- Obtain the obstacle avoidance behaviors - one for each proximity sensor
     obstacleAvoidanceBehaviours = {}
     for i=1,#robot.proximity do
         obstacleAvoidanceBehaviours[i] = obstacleAvoidanceBehaviour(i)
     end
 
-    -- List of all the behaviors.
+    -- List of the behaviors.
     behaviors = {
         randomWalkBehaviour(),
         lightFollowerBehaviour()
     }
+    -- Concat the obstacle avoidance behaviors
+    behaviors = utils.concatArray(behaviors, obstacleAvoidanceBehaviours)
 
-    behaviors = concatArray(behaviors, obstacleAvoidanceBehaviours)
-    -- For that sum up all the resulting vectors
+    -- Sum up all the resulting vectors
     resultingVector = {length = 0.0, angle = 0.0}
     for i=1, #behaviors do
         resultingVector = vector.vec2_polar_sum(resultingVector, behaviors[i])
     end
-    -- transform the resulting vector in differential steering and command the motors.
+    -- Transform the resulting vector in differential steering and command the motors.
     differentialCmd = vector.toDifferential(resultingVector)
-    robot.wheels.set_velocity(limitVelocity(differentialCmd.l), limitVelocity(differentialCmd.r))
+    robot.wheels.set_velocity(differentialCmd.l, differentialCmd.r)
 end
 
 
