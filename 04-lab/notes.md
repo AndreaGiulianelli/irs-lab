@@ -14,7 +14,7 @@ In order to contrast a bit the *local minimals* and to be able to discover the l
 This is obtained via a **Noise potential field** that is present in all the arena and that allows the robot to be pushed in random directions.
 This potential field will be enabled only when lights and proximities are under a specific threshold. The threshold is necessary (instead of a simple != 0) in order to handle a bit of noise in the environment/sensors/actuators.
 
-**Perceptual schema**: as said before, in order to be able to enable the potential field, it need the light and the proximity sensors. The robot will obtain the maximum value for each type as a pre-elaboration of the signals giving the results as percepts.
+**Perceptual schema**: as said before, in order to be able to enable the potential field, it needs the light and the proximity sensors. The robot will obtain the maximum value for each type as a pre-elaboration of the signals giving the results as percepts.
 **Resulting vector**: the resulting vector inside the motor schema is computed - when needed - generating a random angle (between -90 degrees and +90 degrees) every X steps and fixing the length at a fixed value.
 
 ### Obstacle avoidance
@@ -28,9 +28,8 @@ Having a single motor schema that fuse and aggregate inside its perceptual schem
 For this reason, I decided to assign to each proximity sensor its own obstacle avoidance behavior. In this way the single behavior - and so the perceptual and motor schema - is instantiated for each single sensor. The motor schema and the internal perceptual schema are really simple because they have to consider only one sensor facing forward.
 **Perceptual schema**: it takes only one proximity sensor and use expose its value and its angle without any pre-elaboration.
 **Resulting vector** : the resulting vector computed inside the motor schema is:
-
 - angle: opposite angle respect to the sensor (obtained considering the ARGoS strategy to compute angles (https://www.argos-sim.info/plow2015/). 
-  I have created this simple formula to obtain the angle: ``-(angle/angle)*PI  + angle``)
+  I have created this simple formula to obtain the opposite angle: ``-(angle/angle)*PI  + angle``)
 - length: use directly the value from the sensor being in the range [0,1]. In this way we obtain automatically the fact that the potential field is lower as the robot moves away from the obstacle.
 
 The sum of all this potential fields (needed to compose all the motor schemas on the basis of the motor schemas architecture) will result in a vector that will avoid the obstacle.
@@ -50,7 +49,7 @@ Otherwise, if no light is detected or the value is below the threshold, the resu
 
 ## Additional consideration
 - The vectors lengths returned by motor schemas are all in the interval [0, 1]. This allows a better composability of the different behaviors (so the correct summation of vectors).
-- As said above, a threshold is used in order to handle noisy environment/sensors/actuators. It was necessary to consider the threshold also in the motor schema for the light follower behavior otherwise noise will enable the potential field causing strange behaviors.
+- As said above, a threshold is used in order to handle noisy environment/sensors/actuators. It was necessary to consider the threshold also in the motor schema for the light follower behavior otherwise noise would enable the potential field causing strange behaviors.
 
 ## Implementation
 To implement it, each motor schema has its own function in which the perceptual schema is evaluated and the resulting vector calculated.
