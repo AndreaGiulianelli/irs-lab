@@ -40,7 +40,7 @@ function obstacleAvoidanceBehaviour(nSensor)
     proximityAngle = robot.proximity[nSensor].angle
     -- Motor schema
     -- the proximity is taken directly from the perceptual schema, for the angle it is computed the opposite.
-    return {length = proximity, angle = (-(proximityAngle/proximityAngle)*math.pi + proximityAngle)}
+    return {length = proximity, angle = (-(proximityAngle/math.abs(proximityAngle))*math.pi + proximityAngle)}
 end
 
 LIGHT_MAX = 0.58

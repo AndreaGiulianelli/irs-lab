@@ -29,7 +29,7 @@ For this reason, I decided to assign to each proximity sensor its own obstacle a
 **Perceptual schema**: it takes only one proximity sensor and use expose its value and its angle without any pre-elaboration.
 **Resulting vector** : the resulting vector computed inside the motor schema is:
 - angle: opposite angle respect to the sensor (obtained considering the ARGoS strategy to compute angles (https://www.argos-sim.info/plow2015/). 
-  I have created this simple formula to obtain the opposite angle: ``-(angle/angle)*PI  + angle``)
+  I have created this simple formula to obtain the opposite angle: ``-(angle/abs(angle))*PI  + angle``)
 - length: use directly the value from the sensor being in the range [0,1]. In this way we obtain automatically the fact that the potential field is lower as the robot moves away from the obstacle.
 
 The sum of all this potential fields (needed to compose all the motor schemas on the basis of the motor schemas architecture) will result in a vector that will avoid the obstacle.
