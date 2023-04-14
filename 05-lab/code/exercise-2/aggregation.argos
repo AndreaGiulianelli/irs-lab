@@ -38,7 +38,7 @@
   <!-- * Arena configuration * -->
   <!-- *********************** -->
   <arena size="4.2, 5.2, 1.2" center="0,0,0.5">
-    <floor id="f" source="image" path="no_spot.png" />
+    <floor id="f" source="image" path="one_spot.png" />
 
     <box id="bn" size="0.1, 5, 0.2" movable="false">
       <body position="2,0,0"  orientation="0,0,0" />
@@ -92,9 +92,9 @@
     <qt-opengl lua_editor="false">
       <camera>
         <placements>
-          <placement idx="0" position="-0.00569879,0.01,4.86243" look_at="-0.00569879,0.01,3.86243" lens_focal_length="20" />
-          <placement idx="1" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" />
-          <placement idx="2" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" />
+          <placement index="0" position="-0.00569879,0.01,4.86243" up="-0.834728,-2.16769e-15,0.550663" look_at="-0.00569879,0.01,3.86243" lens_focal_length="20" />
+          <placement index="1" position="-2,0,2" look_at="0,0,0" up="-0.834728,-2.16769e-15,0.550663" lens_focal_length="20" />
+          <placement index="2" position="0.884183,0.359128,0.490269" up="-0.834728,-2.16769e-15,0.550663" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" />
         </placements>
       </camera>
     </qt-opengl>
