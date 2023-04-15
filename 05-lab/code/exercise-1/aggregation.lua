@@ -21,14 +21,15 @@ function init()
 
 end
 
+-- Aggregation layer
 function aggregation(inh_left_v, inh_right_v)
     -- Check if there are inhibition from the upper layer
     if (inh_left_v == false) and (inh_right_v == false) then
 
-        number_robot_sensed = utils.CountRAB(MAX_RANGE)
+        number_robot_sensed = utils.countRAB(MAX_RANGE)
         t = robot.random.uniform()
 
-        -- Check next current state
+        -- Check next state
         if current_state == States.RANDOM_WALK then
             ps = math.min(PSMAX, S + ALPHA*number_robot_sensed) 
             if t <= ps then
@@ -80,7 +81,7 @@ function obstacleAvoidance(inh_left_v, inh_right_v)
         -- Check if there are obstacles
         if max_proximity_value < MAX_PROXIMITY_THRESHOLD then
             avoiding = false
-            -- There are no obstacles so delegate work to light follower
+            -- There are no dangerous obstacles so delegate work
             return randomWalk(false, false)
         else 
             if avoiding == false then
@@ -127,11 +128,13 @@ end
 
 function step()
     left_v, right_v = aggregation(false, false)
-    robot.wheels.set_velocity(left_v,right_v)
+    robot.wheels.set_velocity(left_v, right_v)
 end
 
 function reset()
-
+    current_state = States.RANDOM_WALK
+    n_steps = 0
+    avoiding = false
 end
 
 function destroy()
