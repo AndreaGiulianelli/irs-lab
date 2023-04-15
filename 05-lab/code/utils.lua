@@ -10,5 +10,20 @@ function utils.countRAB(max_range)
     end
     return number_robot_sensed
 end
+
+-- If all the sensors sense a value near the dark (considering some form of noise) then return true, false otherwise.
+function utils.onBlackSpot()
+    for i = 1, #robot.motor_ground do
+        if robot.motor_ground[i].value > 0.2 then
+            return false
+        end
+    end
+    return true
+end
+
+-- Utility function to cast a boolean value to a binary value
+function utils.boolToBinary(value)
+    return value and 1 or 0
+end
     
 return utils
